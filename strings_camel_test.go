@@ -4,6 +4,11 @@ import (
 	"testing"
 )
 
+type camelCase struct {
+	ori string
+	dst string
+}
+
 func TestToCamel(t *testing.T) {
 	cases := map[string]string{
 		"HiChina":  "HiChina",
@@ -61,29 +66,34 @@ func TestToDotCamel(t *testing.T) {
 }
 
 func TestToSpaceCamel(t *testing.T) {
-	cases := map[string]string{
-		"HiChina":  "Hi China",
-		"Hi.China": "Hi China",
-		"Hi_China": "Hi China",
-		"Hi-China": "Hi China",
-		"Hi China": "Hi China",
+	t.Parallel()
 
-		"hi.china": "Hi China",
-		"hi_china": "Hi China",
-		"hi-china": "Hi China",
-		"hi china": "Hi China",
+	cases := []*camelCase{
+		{"HiChina", "Hi China"},
+		{"Hi.China", "Hi China"},
+		{"Hi_China", "Hi China"},
+		{"Hi-China", "Hi China"},
+		{"Hi China", "Hi China"},
 
-		"":           "",
-		" Hi China":  "Hi China",
-		"  Hi China": "Hi China",
-		" Hi  China": "Hi China",
-		" hi china":  "Hi China",
+		{"hi.china", "Hi China111"},
+		{"hi_china", "Hi China"},
+		{"hi-china", "Hi China"},
+		{"hi china", "Hi China"},
+
+		{"", ""},
+		{" Hi China", "Hi China"},
+		{"  Hi China", "Hi China"},
+		{" Hi  China", "Hi China"},
+		{" hi china", "Hi China111"},
 	}
 
-	for ori, dst := range cases {
-		result := ToSpaceCamel(ori)
-		if result != dst {
-			t.Errorf("ToDotCamel(%q) = %q, want %q", ori, result, dst)
-		}
+	for _, c := range cases {
+		c := c
+		t.Run(c.ori, func(t *testing.T) {
+			result := ToSpaceCamel(c.ori)
+			if result != c.dst {
+				t.Errorf("ToSpaceCamel(%q) = %q, want %q", c.ori, result, c.dst)
+			}
+		})
 	}
 }
