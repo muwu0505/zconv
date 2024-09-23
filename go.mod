@@ -1,4 +1,4 @@
-module github.com/muwu/zconv
+module github.com/muwu0505/zconv
 
 go 1.19
 
